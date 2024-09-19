@@ -120,11 +120,48 @@ function renderTimeline(events: TimelineEvent[], container: HTMLElement) {
         });
     }
 
+
+    function addLinks() {
+        // Select only relevant elements that are part of the timeline
+        const elements = document.querySelectorAll(".vis-item-content");
+
+        items.forEach((item) => {
+            // If item content contains Obsidian-style links
+            if (item.content.includes("[[")) {
+                let clean_data = item.content.replace("[[", "").replace("]]", "");
+                let linkHTML = "";
+
+                if (clean_data.includes("|")) {
+                    let [link, display] = clean_data.split('|');
+                    linkHTML = `<a href="${link}" class="internal-link">${display}</a>`;
+                } else {
+                    linkHTML = `<a href="${clean_data}" class="internal-link">${clean_data}</a>`;
+                }
+
+                elements.forEach((element) => {
+                    // If the element contains the original content
+                    if (element.innerHTML.includes(item.content)) {
+                        // Replace the content with the link HTML
+                        element.innerHTML = element.innerHTML.replace(item.content, linkHTML);
+                    }
+                });
+            }
+        });
+    }
+
+
+    function updateData() {
+        updateLabels();
+        addLinks();
+    }
+
+
     // Update labels on change
-    timeline.on('change', updateLabels);
-    timeline.on('rangechanged', updateLabels);
-    timeline.on('resize', updateLabels);
+    timeline.on('change', updateData);
+    timeline.on('rangechanged', updateData);
+    timeline.on('resize', updateData);
 
     // Initial call to position labels
-    updateLabels();
+
+    timeline.on('ready', updateData);
 }
