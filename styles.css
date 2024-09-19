@@ -1,8 +1,8 @@
-/*
-
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
-
-If your plugin does not need CSS, delete this file.
-
-*/
+.custom-label {
+    font-size: 14px;
+    /* Adjust the text size */
+    color: black;
+    /* Customize the label color */
+    white-space: nowrap;
+    /* Prevent text wrapping */
+}

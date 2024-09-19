@@ -1,7 +1,6 @@
 import { Plugin } from "obsidian";
 import { Timeline, DataSet } from "vis-timeline/standalone";
 
-
 type TimelineEvent = {
     group: string;
     start: string;
@@ -9,12 +8,9 @@ type TimelineEvent = {
     name: string;
 };
 
-
 export default class AwesomeTimelinePlugin extends Plugin {
     async onload() {
-        // Register a new Markdown post processor for awesometimeline
         this.registerMarkdownCodeBlockProcessor("awesometimeline", (source, el, ctx) => {
-            // Parse the timeline from the source
             const timelineData = parseTimelineData(source);
             renderTimeline(timelineData, el);
         });
@@ -25,18 +21,15 @@ export default class AwesomeTimelinePlugin extends Plugin {
     }
 }
 
-// Function to parse the timeline data
 function parseTimelineData(source: string): TimelineEvent[] {
     const lines = source.trim().split("\n");
-
-    const events = [];
+    const events: TimelineEvent[] = [];
     let groupName = "";
 
     for (let line of lines) {
         if (line.startsWith("#")) {
             groupName = line.slice(1).trim();
-        }
-        else {
+        } else {
             const match = line.match(/(\d{4}-\d{2}-\d{2}T?\d{2}:\d{2}:\d{2})?~?(\d{4}-\d{2}-\d{2}T?\d{2}:\d{2}:\d{2})?\s(.+)/);
             if (match) {
                 events.push({
@@ -51,19 +44,15 @@ function parseTimelineData(source: string): TimelineEvent[] {
     return events;
 }
 
-// Function to render timeline
 function renderTimeline(events: TimelineEvent[], container: HTMLElement) {
-
-    // Use a timeline library to render the events, such as vis.js timeline
     const timelineContainer = document.createElement("div");
     timelineContainer.style.height = "400px";
+    timelineContainer.id = "timeline-container";
+    container.appendChild(timelineContainer); // Append to the provided container
 
-    container.appendChild(timelineContainer);
-
-    // Prepare timeline data
     const items = new DataSet(
-        events.map((event, index) => ({
-            id: index,
+        events.map(event => ({
+            id: event.name,
             content: event.name,
             start: event.start,
             end: event.end || undefined,
@@ -72,13 +61,47 @@ function renderTimeline(events: TimelineEvent[], container: HTMLElement) {
     );
 
     const options = {
-        zoomable: true, // Enable zooming
-        zoomMin: 1000 * 60 * 60 * 24, // Minimum zoom level 1 day
-        zoomMax: 1000 * 60 * 60 * 24 * 365 * 100, // Max zoom 100 years
+        zoomable: true,
+        zoomMin: 1000 * 60 * 60 * 24,
+        zoomMax: 1000 * 60 * 60 * 24 * 365 * 100,
         horizontalScroll: true,
         verticalScroll: true,
+        showCurrentTime: false,
     };
 
     const timeline = new Timeline(timelineContainer, items, options);
-    // // 
+
+    // Simple label addition
+    function updateLabels() {
+        const labelsContainer = document.getElementById('label-container');
+        if (labelsContainer) {
+            labelsContainer.innerHTML = ''; // Clear existing labels
+        }
+
+        const eventElements = document.querySelectorAll('.vis-item');
+        eventElements.forEach(eventElement => {
+            const contentDiv = eventElement.querySelector('.vis-item-content');
+            if (contentDiv) {
+                const labelText = contentDiv.textContent || '';
+                if (labelText) {
+                    // Remove the 'vis-item-overflow' class from the parent
+                    const overflowDiv = eventElement.querySelector('.vis-item-overflow');
+                    if (overflowDiv) {
+                        overflowDiv.classList.remove('vis-item-overflow');
+                    }
+                }
+            }
+        });
+    }
+    /*
+    // Call updateLabels after the timeline is rendered
+    const renderedTimeline = new Timeline(timelineContainer, items, options);
+    */
+    // Update labels on change
+    timeline.on('change', updateLabels);
+    timeline.on('rangechanged', updateLabels);
+    timeline.on('resize', updateLabels);
+
+    // Initial call to position labels
+    updateLabels();
 }
