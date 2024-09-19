@@ -65,15 +65,26 @@ function renderTimeline(events: TimelineEvent[], container: HTMLElement) {
     const minDate = new Date(Math.min(...dates.map(date => new Date(date).getTime())));
     const maxDate = new Date(Math.max(...dates.map(date => new Date(date).getTime())));
 
+    // Add a margin of 20% around the date range
+    const marginPercentage = 0.2;
+    const range = maxDate.getTime() - minDate.getTime();
+    const margin = range * marginPercentage;
+
+    const adjustedMinDate = new Date(minDate.getTime() - margin);
+    const adjustedMaxDate = new Date(maxDate.getTime() + margin);
+
+    // Determine a reasonable minimum zoom level
+    const minZoomLevel = 1000 * 60 * 60; // 1 h  //Math.max(1000 * 60 * 60 * 24, range / 365); // At least 1 day or one year of the range
+
     const options = {
         zoomable: true,
-        zoomMin: 1000 * 60 * 60 * 24,
-        zoomMax: maxDate.getTime() - minDate.getTime(), // Set max zoom based on the range
+        zoomMin: minZoomLevel,
+        zoomMax: adjustedMaxDate.getTime() - adjustedMinDate.getTime(), // Set max zoom based on the adjusted range
         horizontalScroll: true,
         verticalScroll: true,
         showCurrentTime: false,
-        min: minDate, // Set the minimum viewable date
-        max: maxDate // Set the maximum viewable date
+        min: adjustedMinDate, // Set the minimum viewable date
+        max: adjustedMaxDate // Set the maximum viewable date
     };
 
     const timeline = new Timeline(timelineContainer, items, options);
@@ -99,7 +110,6 @@ function renderTimeline(events: TimelineEvent[], container: HTMLElement) {
                 }
             }
         });
-
 
         const backgroundElements = document.querySelectorAll('.vis-background');
 
