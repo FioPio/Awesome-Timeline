@@ -74,7 +74,7 @@ function renderTimeline(events: TimelineEvent[], container: HTMLElement) {
     const adjustedMaxDate = new Date(maxDate.getTime() + margin);
 
     // Determine a reasonable minimum zoom level
-    const minZoomLevel = 1000 * 60 * 60; // 1 h  //Math.max(1000 * 60 * 60 * 24, range / 365); // At least 1 day or one year of the range
+    const minZoomLevel = range / 365; //1000 * 60 * 60; // 1 h  //Math.max(1000 * 60 * 60 * 24, range / 365); // At least 1 day or one year of the range
 
     const options = {
         zoomable: true,
