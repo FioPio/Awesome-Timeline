@@ -92,11 +92,17 @@ function renderTimeline(events: TimelineEvent[], container: HTMLElement) {
                 }
             }
         });
+
+
+        const backgroundElements = document.querySelectorAll('.vis-background');
+
+        backgroundElements.forEach((element: Element) => {
+            // Cast element to HTMLElement
+            const htmlElement = element as HTMLElement;
+            htmlElement.style.backgroundColor = '#dfdfdf';
+        });
     }
-    /*
-    // Call updateLabels after the timeline is rendered
-    const renderedTimeline = new Timeline(timelineContainer, items, options);
-    */
+
     // Update labels on change
     timeline.on('change', updateLabels);
     timeline.on('rangechanged', updateLabels);
