@@ -60,13 +60,20 @@ function renderTimeline(events: TimelineEvent[], container: HTMLElement) {
         }))
     );
 
+    // Calculate the minimum and maximum date from events
+    const dates = events.flatMap(event => [event.start, event.end]).filter(date => date !== null) as string[];
+    const minDate = new Date(Math.min(...dates.map(date => new Date(date).getTime())));
+    const maxDate = new Date(Math.max(...dates.map(date => new Date(date).getTime())));
+
     const options = {
         zoomable: true,
         zoomMin: 1000 * 60 * 60 * 24,
-        zoomMax: 1000 * 60 * 60 * 24 * 365 * 100,
+        zoomMax: maxDate.getTime() - minDate.getTime(), // Set max zoom based on the range
         horizontalScroll: true,
         verticalScroll: true,
         showCurrentTime: false,
+        min: minDate, // Set the minimum viewable date
+        max: maxDate // Set the maximum viewable date
     };
 
     const timeline = new Timeline(timelineContainer, items, options);
