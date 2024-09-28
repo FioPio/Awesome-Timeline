@@ -46,7 +46,6 @@ function parseTimelineData(source: string): TimelineEvent[] {
 
 function renderTimeline(events: TimelineEvent[], container: HTMLElement) {
     const timelineContainer = document.createElement("div");
-    //timelineContainer.style.height = "400px";
     timelineContainer.id = "timeline-container";
     container.appendChild(timelineContainer); // Append to the provided container
 
@@ -93,7 +92,9 @@ function renderTimeline(events: TimelineEvent[], container: HTMLElement) {
     function updateLabels() {
         const labelsContainer = document.getElementById('label-container');
         if (labelsContainer) {
-            labelsContainer.innerHTML = ''; // Clear existing labels
+          while (labelsContainer.firstChild) {
+               labelsContainer.removeChild(labelsContainer.firstChild); // Clear existing labels
+           }
         }
 
         const eventElements = document.querySelectorAll('.vis-item');
@@ -110,16 +111,6 @@ function renderTimeline(events: TimelineEvent[], container: HTMLElement) {
                 }
             }
         });
-
-        /*
-        const backgroundElements = document.querySelectorAll('.vis-background');
-
-        backgroundElements.forEach((element: Element) => {
-            // Cast element to HTMLElement
-            const htmlElement = element as HTMLElement;
-            htmlElement.style.backgroundColor = '#dfdfdf';
-        });
-        */
     }
 
 
@@ -141,12 +132,19 @@ function renderTimeline(events: TimelineEvent[], container: HTMLElement) {
                 }
 
                 elements.forEach((element) => {
-                    // If the element contains the original content
-                    if (element.innerHTML.includes(item.content)) {
-                        // Replace the content with the link HTML
-                        element.innerHTML = element.innerHTML.replace(item.content, linkHTML);
-                    }
-                });
+                  // If the element contains the original content
+                  if (element.textContent?.includes(item.content)) {
+                      const newContent = document.createElement('span'); // Create a span or appropriate element
+                      newContent.innerHTML = linkHTML; // Populate the new element with the HTML you want
+
+                      // Only replace if the element has a first child
+                      if (element.firstChild) {
+                          element.replaceChild(newContent, element.firstChild);
+                      } else {
+                          element.appendChild(newContent); // If there's no child, append the new content
+                      }
+                  }
+              });
             }
         });
     }
