@@ -46,7 +46,7 @@ function parseTimelineData(source: string): TimelineEvent[] {
 
 function renderTimeline(events: TimelineEvent[], container: HTMLElement) {
     const timelineContainer = document.createElement("div");
-    timelineContainer.style.height = "400px";
+    //timelineContainer.style.height = "400px";
     timelineContainer.id = "timeline-container";
     container.appendChild(timelineContainer); // Append to the provided container
 
@@ -111,6 +111,7 @@ function renderTimeline(events: TimelineEvent[], container: HTMLElement) {
             }
         });
 
+        /*
         const backgroundElements = document.querySelectorAll('.vis-background');
 
         backgroundElements.forEach((element: Element) => {
@@ -118,6 +119,7 @@ function renderTimeline(events: TimelineEvent[], container: HTMLElement) {
             const htmlElement = element as HTMLElement;
             htmlElement.style.backgroundColor = '#dfdfdf';
         });
+        */
     }
 
 

@@ -6,3 +6,12 @@
     white-space: nowrap;
     /* Prevent text wrapping */
 }
+
+
+.vis-background {
+  background-color: #dfdfdf;
+}
+
+timeline-container {
+  height: 400px;
+}
